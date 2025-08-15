@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Astronavigation Sum Calculator</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --muted: #cbd5e1;
+      --ink: #e5e7eb;
+      --accent: #60a5fa;
+      --accent-2: #34d399;
+      --danger: #f87171;
+      --ring: rgba(96,165,250,.45);
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    [hidden] { display: none !important; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 800px at 80% -20%, rgba(59,130,246,.15), transparent 60%),
+                  radial-gradient(900px 600px at -10% 110%, rgba(34,197,94,.12), transparent 60%),
+                  var(--bg);
+      color: var(--ink);
+      line-height: 1.35;
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+
+    header.hero {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    header.hero h1 {
+      font-size: 28px;
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    header.hero p { margin: 0; color: var(--muted); }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.0));
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    @media (min-width: 860px) {
+      .grid.two { grid-template-columns: 1fr 1fr; }
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .segmented {
+      display: inline-flex;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 4px;
+      border-radius: 999px;
+    }
+    .segmented input { display: none; }
+    .segmented label {
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--muted);
+      user-select: none;
+    }
+    .segmented input:checked + label {
+      background: linear-gradient(180deg, var(--accent), #3b82f6);
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0,0,0,.3);
+    }
+
+    .row { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 560px) {
+      .row { grid-template-columns: 1fr 1fr 1fr; }
+      .row.dm { grid-template-columns: 1fr 1fr; }
+    }
+
+    .angle-card h3 { margin: 0 0 8px 0; font-size: 16px; opacity: .9; }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+    .field label { font-size: 12px; color: var(--muted); }
+    .field input[type="number"], .field input[readonly], .out {
+      width: 100%;
+      padding: 12px 12px;
+      background: rgba(17,24,39,.75);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--ink);
+      border-radius: 12px;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .field input[type="number"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--ring);
+    }
+
+    .hint { color: var(--muted); font-size: 12px; margin-top: 8px; }
+
+    $1    .results > div { display: grid; align-content: start; gap: 6px; }
+    .out { display: block; margin-top: 2px; }
+    @media (min-width: 680px) {
+      .results { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    .kicker { font-size: 12px; color: var(--muted); margin-bottom: 6px; line-height: 1.2; }
+
+    .notice { color: var(--danger); font-size: 13px; min-height: 18px; }
+
+    .footer-note { color: var(--muted); font-size: 12px; margin-top: 12px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.07); color: var(--ink); cursor: pointer; text-decoration: none;
+    }
+    .btn:active { transform: translateY(1px); }
+
+    .inline { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <h1>Astronavigation Sum Calculator</h1>
+      <p>Enter two angles and get their sum. Choose classic DMS or minutes with decimals. Everything runs offline in this single file.</p>
+    </header>
+
+    <section class="card">
+      <div class="toolbar">
+        <div class="kicker">Input format</div>
+        <div class="segmented" role="tablist" aria-label="Input format">
+          <input type="radio" name="mode" id="mode-dms" value="dms">
+          <label for="mode-dms" title="Degrees Minutes Seconds">D° M′ S″</label>
+
+          <input type="radio" name="mode" id="mode-dm" value="dm" checked>
+          <label for="mode-dm" title="Degrees and Decimal Minutes">D° M.m′</label>
+        </div>
+        <div class="inline" style="margin-left:auto">
+          <label for="wrap" class="kicker">Wrap</label>
+          <select id="wrap" class="btn" aria-label="Output wrap">
+            <option value="none" selected>Raw</option>
+            <option value="360">0–360°</option>
+            <option value="180">−180° to +180°</option>
+          </select>
+          <label for="prec" class="kicker">Precision</label>
+          <select id="prec" class="btn" aria-label="Rounding precision">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2" selected>2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid two">
+        <div class="angle-card card">
+          <h3>Angle A</h3>
+          <div id="row-a" class="row dm" data-id="a">
+            <div class="field"><label for="deg-a">Degrees</label><input id="deg-a" type="number" step="1" placeholder="0" /></div>
+            <div class="field"><label for="min-a">Minutes</label><input id="min-a" type="number" step="0.001" placeholder="0" /></div>
+            <div class="field dms-only" hidden><label for="sec-a">Seconds</label><input id="sec-a" type="number" step="0.01" placeholder="0" /></div>
+          </div>
+          <div class="hint">Negative values are allowed in the degrees box. Minutes and seconds should be non-negative.</div>
+        </div>
+
+        <div class="angle-card card">
+          <h3>Angle B</h3>
+          <div id="row-b" class="row dm" data-id="b">
+            <div class="field"><label for="deg-b">Degrees</label><input id="deg-b" type="number" step="1" placeholder="0" /></div>
+            <div class="field"><label for="min-b">Minutes</label><input id="min-b" type="number" step="0.001" placeholder="0" /></div>
+            <div class="field dms-only" hidden><label for="sec-b">Seconds</label><input id="sec-b" type="number" step="0.01" placeholder="0" /></div>
+          </div>
+          <div class="hint">Use minutes with decimals when D° M.m′ is selected. Switch to D° M′ S″ if you prefer seconds.</div>
+        </div>
+      </div>
+
+      <div style="margin: 14px 0; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <button class="btn" id="normalize">Normalize inputs</button>
+        <button class="btn" id="clear">Clear</button>
+        <div id="notice" class="notice"></div>
+      </div>
+
+      <div class="results">
+        <div>
+          <div class="kicker">Sum as D° M′ S″</div>
+          <output id="out-dms" class="out" tabindex="0" aria-live="polite">—</output>
+        </div>
+        <div>
+          <div class="kicker">Sum as D° M.m′</div>
+          <output id="out-dm" class="out" tabindex="0" aria-live="polite">—</output>
+        </div>
+        <div>
+          <div class="kicker">Sum as decimal degrees</div>
+          <output id="out-dd" class="out" tabindex="0" aria-live="polite">—</output>
+        </div>
+      </div>
+
+      <div class="footer-note">Wrapping applies to the displayed sum only. Choose Raw, 0–360 for bearings, or −180 to +180 for longitudes. Rounding affects seconds or decimal minutes display; internal math stays full precision.</div>
+    </section>
+  </div>
+
+  <script>
+    const modeRadios = /** @type {NodeListOf<HTMLInputElement>} */ (document.querySelectorAll('input[name="mode"]'));
+    const precSel = /** @type {HTMLSelectElement} */ (document.getElementById('prec'));
+    const wrapSel = /** @type {HTMLSelectElement} */ (document.getElementById('wrap'));
+    const notice = document.getElementById('notice');
+
+    const rows = [
+      { id: 'a', deg: byId('deg-a'), min: byId('min-a'), sec: byId('sec-a') },
+      { id: 'b', deg: byId('deg-b'), min: byId('min-b'), sec: byId('sec-b') },
+    ];
+
+    const outputs = {
+      dms: document.getElementById('out-dms'),
+      dm: document.getElementById('out-dm'),
+      dd: document.getElementById('out-dd'),
+    };
+
+    const normalizeBtn = document.getElementById('normalize');
+    const clearBtn = document.getElementById('clear');
+
+    function byId(id) { return /** @type {HTMLInputElement} */ (document.getElementById(id)); }
+
+    function currentMode() {
+      return (/** @type {HTMLInputElement} */ (document.querySelector('input[name="mode"]:checked'))).value;
+    }
+
+    function parseNum(v) { const n = parseFloat(String(v)); return Number.isFinite(n) ? n : 0; }
+
+    function signOfDegrees(deg) { return deg < 0 ? -1 : 1; }
+
+    function absDeg(deg) { return Math.abs(deg); }
+
+    // Convert a row to decimal degrees
+    function rowToDecimalDegrees(row, mode) {
+      const d = parseNum(row.deg.value);
+      const m = parseNum(row.min.value);
+      const s = mode === 'dms' ? parseNum(row.sec.value) : 0;
+
+      if (m < 0 || s < 0) throw new Error('Minutes and seconds must be non-negative');
+
+      const sign = signOfDegrees(d);
+      const D = absDeg(d);
+      if (mode === 'dms') {
+        return sign * (D + m / 60 + s / 3600);
+      } else {
+        return sign * (D + m / 60);
+      }
+    }
+
+    function compute() {
+      clearNotice();
+      try {
+        const mode = currentMode();
+        const a = rowToDecimalDegrees(rows[0], mode);
+        const b = rowToDecimalDegrees(rows[1], mode);
+        const sum = a + b;
+        const wrapped = wrapDegrees(sum, wrapSel.value);
+        showResults(wrapped);
+      } catch (err) {
+        showError(err.message || String(err));
+        outputs.dms.textContent = outputs.dm.textContent = outputs.dd.textContent = '—';
+      }
+    }
+
+    function clearNotice() { notice.textContent = ''; }
+    function showError(msg) { notice.textContent = msg; }
+
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+
+    function normalizeInputs() {
+      const mode = currentMode();
+      rows.forEach(r => {
+        let d = parseNum(r.deg.value);
+        let m = parseNum(r.min.value);
+        let s = mode === 'dms' ? parseNum(r.sec.value) : 0;
+
+        if (m < 0) m = 0; if (s < 0) s = 0;
+
+        if (mode === 'dms') {
+          // Carry seconds to minutes
+          if (s >= 60) { m += Math.floor(s / 60); s = s % 60; }
+          // Carry minutes to degrees
+          if (m >= 60) { d += signOfDegrees(d) * Math.floor(m / 60); m = m % 60; }
+        } else {
+          // Decimal minutes can exceed 60; carry the integer part
+          if (m >= 60 || m <= -60) {
+            const carry = Math.trunc(m / 60);
+            d += signOfDegrees(d) * carry;
+            m = m - carry * 60;
+          }
+        }
+
+        r.deg.value = String(d);
+        r.min.value = String(m);
+        if (r.sec) r.sec.value = String(s);
+      });
+      compute();
+    }
+
+    function pad2(n) { return String(Math.trunc(Math.abs(n))).padStart(2, '0'); }
+
+    function formatDMS(dd, secPlaces) {
+      const sign = dd < 0 ? '-' : '';
+      let abs = Math.abs(dd);
+      let D = Math.floor(abs);
+      let rem = (abs - D) * 60; // minutes
+      let M = Math.floor(rem);
+      let S = (rem - M) * 60; // seconds
+
+      // Round seconds, then carry if needed
+      const factor = Math.pow(10, secPlaces);
+      S = Math.round(S * factor) / factor;
+      if (S >= 60) { S = 0; M += 1; }
+      if (M >= 60) { M = 0; D += 1; }
+
+      const Sstr = S.toFixed(secPlaces).padStart(secPlaces ? 2 + 1 + secPlaces : 2, '0');
+      return `${sign}${D}° ${pad2(M)}′ ${Sstr}″`;
+    }
+
+    function formatDM(dd, minPlaces) {
+      const sign = dd < 0 ? '-' : '';
+      let abs = Math.abs(dd);
+      let D = Math.floor(abs);
+      let M = (abs - D) * 60; // decimal minutes
+
+      // Round minutes and carry if needed
+      const factor = Math.pow(10, minPlaces);
+      M = Math.round(M * factor) / factor;
+      if (M >= 60) { M = 0; D += 1; }
+
+      const mStr = M.toFixed(minPlaces).padStart(minPlaces ? 2 + 1 + minPlaces : 2, '0');
+      return `${sign}${D}° ${mStr}′`;
+    }
+
+    function wrapDegrees(dd, mode) {
+      if (mode === '360') {
+        let x = dd % 360;
+        if (x < 0) x += 360;
+        return x;
+      } else if (mode === '180') {
+        let x = dd % 360;
+        if (x <= -180) x += 360;
+        if (x > 180) x -= 360;
+        return x;
+      }
+      return dd;
+    }
+
+    function showResults(sumDd) {
+      const p = parseInt(precSel.value, 10);
+      outputs.dms.textContent = formatDMS(sumDd, p);
+      outputs.dm.textContent = formatDM(sumDd, p);
+      outputs.dd.textContent = sumDd.toFixed(Math.min(Math.max(p + 2, 3), 8));
+    }
+
+    function switchModeUi(mode) {
+      document.querySelectorAll('.row').forEach(row => {
+        const dmsBits = row.querySelectorAll('.dms-only');
+        const mins = row.querySelectorAll('input[id^="min-"]');
+        if (mode === 'dms') {
+          row.classList.remove('dm');
+          dmsBits.forEach(el => { el.removeAttribute('hidden'); el.setAttribute('aria-hidden','false'); el.style.display=''; });
+          mins.forEach(inp => { inp.setAttribute('step','1'); inp.setAttribute('placeholder','0'); });
+        } else {
+          row.classList.add('dm');
+          dmsBits.forEach(el => { el.setAttribute('hidden',''); el.setAttribute('aria-hidden','true'); el.style.display='none'; });
+          mins.forEach(inp => { inp.setAttribute('step','0.001'); inp.setAttribute('placeholder','0.000'); });
+        }
+      });
+      compute();
+    } else {
+          row.classList.add('dm');
+          row.querySelectorAll('.dms-only').forEach(el => el.setAttribute('hidden', ''));
+          row.querySelectorAll('input[id^="min-"]').forEach(inp => inp.setAttribute('step', '0.001'));
+          row.querySelectorAll('input[id^="min-"]').forEach(inp => inp.setAttribute('placeholder', '0.000'));
+        }
+      });
+      compute();
+    }
+
+    // Event wiring
+    modeRadios.forEach(r => r.addEventListener('change', () => switchModeUi(currentMode())));
+    precSel.addEventListener('change', compute);
+    wrapSel.addEventListener('change', compute);
+    rows.forEach(r => {
+      [r.deg, r.min, r.sec].forEach(inp => {
+        if (!inp) return;
+        inp.addEventListener('input', compute);
+        inp.addEventListener('blur', () => { normalizeInputs(); });
+      });
+    });
+    normalizeBtn.addEventListener('click', normalizeInputs);
+    clearBtn.addEventListener('click', () => {
+      rows.forEach(r => { r.deg.value = ''; r.min.value = ''; if (r.sec) r.sec.value = ''; });
+      outputs.dms.textContent = outputs.dm.textContent = outputs.dd.textContent = '—';
+      clearNotice();
+      byId('deg-a').focus();
+    });
+
+    // Initial compute
+    switchModeUi(currentMode());
+
+    // Prefill demo values to show behaviour
+    byId('deg-a').value = '12'; byId('min-a').value = '34.5';
+    byId('deg-b').value = '5';  byId('min-b').value = '27.8';
+    compute();
+  </script>
+</body>
+</html>

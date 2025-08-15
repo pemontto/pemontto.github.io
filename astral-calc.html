@@ -11,7 +11,6 @@
       --muted: #cbd5e1;
       --ink: #e5e7eb;
       --accent: #60a5fa;
-      --accent-2: #34d399;
       --danger: #f87171;
       --ring: rgba(96,165,250,.45);
       --shadow: 0 10px 30px rgba(0,0,0,.35);
@@ -31,27 +30,14 @@
       line-height: 1.35;
     }
 
-    .wrap {
-      max-width: 980px;
-      margin: 40px auto;
-      padding: 0 16px;
-    }
+    .wrap { max-width: 980px; margin: 40px auto; padding: 0 16px; }
 
-    header.hero {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-    header.hero h1 {
-      font-size: 28px;
-      margin: 0;
-      font-weight: 700;
-      letter-spacing: .2px;
-    }
+    header.hero { display: grid; gap: 10px; margin-bottom: 18px; }
+    header.hero h1 { font-size: 28px; margin: 0; font-weight: 700; letter-spacing: .2px; }
     header.hero p { margin: 0; color: var(--muted); }
 
     .card {
-      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.0));
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
       backdrop-filter: blur(6px);
       border: 1px solid rgba(255,255,255,.06);
       border-radius: var(--radius);
@@ -59,80 +45,31 @@
       padding: 18px;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-    @media (min-width: 860px) {
-      .grid.two { grid-template-columns: 1fr 1fr; }
-    }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 860px) { .grid.two { grid-template-columns: 1fr 1fr; } }
 
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
+    .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 8px; }
 
-    .segmented {
-      display: inline-flex;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.08);
-      padding: 4px;
-      border-radius: 999px;
-    }
+    .segmented { display: inline-flex; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); padding: 4px; border-radius: 999px; }
     .segmented input { display: none; }
-    .segmented label {
-      padding: 8px 14px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-size: 14px;
-      color: var(--muted);
-      user-select: none;
-    }
-    .segmented input:checked + label {
-      background: linear-gradient(180deg, var(--accent), #3b82f6);
-      color: #fff;
-      text-shadow: 0 1px 0 rgba(0,0,0,.3);
-    }
+    .segmented label { padding: 8px 14px; border-radius: 999px; cursor: pointer; font-size: 14px; color: var(--muted); user-select: none; }
+    .segmented input:checked + label { background: linear-gradient(180deg, var(--accent), #3b82f6); color: #fff; text-shadow: 0 1px 0 rgba(0,0,0,.3); }
 
     .row { display: grid; grid-template-columns: 1fr; gap: 10px; }
-    @media (min-width: 560px) {
-      .row { grid-template-columns: 1fr 1fr 1fr; }
-      .row.dm { grid-template-columns: 1fr 1fr; }
-    }
+    @media (min-width: 560px) { .row { grid-template-columns: 1fr 1fr 1fr; } .row.dm { grid-template-columns: 1fr 1fr; } }
 
     .angle-card h3 { margin: 0 0 8px 0; font-size: 16px; opacity: .9; }
 
-    .field {
-      display: grid;
-      gap: 6px;
-    }
+    .field { display: grid; gap: 6px; }
     .field label { font-size: 12px; color: var(--muted); }
-    .field input[type="number"], .field input[readonly], .out {
-      width: 100%;
-      padding: 12px 12px;
-      background: rgba(17,24,39,.75);
-      border: 1px solid rgba(255,255,255,.08);
-      color: var(--ink);
-      border-radius: 12px;
-      outline: none;
-      transition: border-color .15s, box-shadow .15s;
-    }
-    .field input[type="number"]:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 4px var(--ring);
-    }
+    .field input[type="number"], .field input[readonly], .out { width: 100%; padding: 12px 12px; background: rgba(17,24,39,.75); border: 1px solid rgba(255,255,255,.08); color: var(--ink); border-radius: 12px; outline: none; transition: border-color .15s, box-shadow .15s; }
+    .field input[type="number"]:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--ring); }
 
     .hint { color: var(--muted); font-size: 12px; margin-top: 8px; }
 
-    $1    .results > div { display: grid; align-content: start; gap: 6px; }
+    .results { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+    .results > div { display: grid; align-content: start; gap: 6px; }
     .out { display: block; margin-top: 2px; }
-    @media (min-width: 680px) {
-      .results { grid-template-columns: 1fr 1fr 1fr; }
-    }
 
     .kicker { font-size: 12px; color: var(--muted); margin-bottom: 6px; line-height: 1.2; }
 
@@ -140,14 +77,14 @@
 
     .footer-note { color: var(--muted); font-size: 12px; margin-top: 12px; }
 
-    .btn {
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.07); color: var(--ink); cursor: pointer; text-decoration: none;
-    }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.07); color: var(--ink); cursor: pointer; text-decoration: none; }
     .btn:active { transform: translateY(1px); }
 
     .inline { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+    details.tests { margin-top: 14px; }
+    details.tests summary { cursor: pointer; }
+    pre.testlog { background: rgba(17,24,39,.75); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,.08); overflow: auto; }
   </style>
 </head>
 <body>
@@ -229,10 +166,18 @@
       </div>
 
       <div class="footer-note">Wrapping applies to the displayed sum only. Choose Raw, 0–360 for bearings, or −180 to +180 for longitudes. Rounding affects seconds or decimal minutes display; internal math stays full precision.</div>
+
+      <details class="tests">
+        <summary>Self‑tests</summary>
+        <p>Click run to verify core math, formatting, and wrapping.</p>
+        <button class="btn" id="run-tests" type="button">Run tests</button>
+        <pre class="testlog" id="testlog">No tests run yet.</pre>
+      </details>
     </section>
   </div>
 
   <script>
+    // ——— DOM handles
     const modeRadios = /** @type {NodeListOf<HTMLInputElement>} */ (document.querySelectorAll('input[name="mode"]'));
     const precSel = /** @type {HTMLSelectElement} */ (document.getElementById('prec'));
     const wrapSel = /** @type {HTMLSelectElement} */ (document.getElementById('wrap'));
@@ -254,9 +199,7 @@
 
     function byId(id) { return /** @type {HTMLInputElement} */ (document.getElementById(id)); }
 
-    function currentMode() {
-      return (/** @type {HTMLInputElement} */ (document.querySelector('input[name="mode"]:checked'))).value;
-    }
+    function currentMode() { return (/** @type {HTMLInputElement} */ (document.querySelector('input[name="mode"]:checked'))).value; }
 
     function parseNum(v) { const n = parseFloat(String(v)); return Number.isFinite(n) ? n : 0; }
 
@@ -276,9 +219,8 @@
       const D = absDeg(d);
       if (mode === 'dms') {
         return sign * (D + m / 60 + s / 3600);
-      } else {
-        return sign * (D + m / 60);
       }
+      return sign * (D + m / 60);
     }
 
     function compute() {
@@ -291,15 +233,13 @@
         const wrapped = wrapDegrees(sum, wrapSel.value);
         showResults(wrapped);
       } catch (err) {
-        showError(err.message || String(err));
+        showError(/** @type {any} */(err).message || String(err));
         outputs.dms.textContent = outputs.dm.textContent = outputs.dd.textContent = '—';
       }
     }
 
     function clearNotice() { notice.textContent = ''; }
     function showError(msg) { notice.textContent = msg; }
-
-    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
     function normalizeInputs() {
       const mode = currentMode();
@@ -371,7 +311,8 @@
         let x = dd % 360;
         if (x < 0) x += 360;
         return x;
-      } else if (mode === '180') {
+      }
+      if (mode === '180') {
         let x = dd % 360;
         if (x <= -180) x += 360;
         if (x > 180) x -= 360;
@@ -399,14 +340,6 @@
           row.classList.add('dm');
           dmsBits.forEach(el => { el.setAttribute('hidden',''); el.setAttribute('aria-hidden','true'); el.style.display='none'; });
           mins.forEach(inp => { inp.setAttribute('step','0.001'); inp.setAttribute('placeholder','0.000'); });
-        }
-      });
-      compute();
-    } else {
-          row.classList.add('dm');
-          row.querySelectorAll('.dms-only').forEach(el => el.setAttribute('hidden', ''));
-          row.querySelectorAll('input[id^="min-"]').forEach(inp => inp.setAttribute('step', '0.001'));
-          row.querySelectorAll('input[id^="min-"]').forEach(inp => inp.setAttribute('placeholder', '0.000'));
         }
       });
       compute();
@@ -438,6 +371,41 @@
     byId('deg-a').value = '12'; byId('min-a').value = '34.5';
     byId('deg-b').value = '5';  byId('min-b').value = '27.8';
     compute();
+
+    // ——— Self tests
+    document.getElementById('run-tests').addEventListener('click', runTests);
+
+    function approxEqual(a,b,eps=1e-6){ return Math.abs(a-b) <= eps; }
+
+    function runTests(){
+      const lines = [];
+      function ok(name, cond){ lines.push(`${cond ? 'PASS' : 'FAIL'}  ${name}`); }
+
+      // Test 1: DM input sum equals expected decimal degrees
+      const t1a = 12 + 34.5/60; // 12°34.5′
+      const t1b = 5 + 27.8/60;  // 5°27.8′
+      const t1sum = t1a + t1b;  // expected 18.0383...
+      ok('DM math sum', approxEqual(t1sum, 18.0383333333, 1e-9));
+
+      // Test 2: DMS formatting round-trip: 18.0383333333 -> 18° 02′ 18.00″ (p=2)
+      ok('formatDMS', formatDMS(18.0383333333, 2) === '18° 02′ 18.00″');
+
+      // Test 3: DM formatting at 2 places: -> 18° 02.30′
+      ok('formatDM', formatDM(18.0383333333, 2) === '18° 02.30′');
+
+      // Test 4: wrap 361.2 to 1.2 (0–360)
+      ok('wrap 0–360', approxEqual(wrapDegrees(361.2, '360'), 1.2));
+
+      // Test 5: wrap -190 to 170 (−180..+180)
+      ok('wrap −180..+180', approxEqual(wrapDegrees(-190, '180'), 170));
+
+      // Test 6: DMS parsing: 10° 59′ 120″ equals 11° 01′ 00″ after normalize
+      const tmpRow = { deg: { value: '10' }, min: { value: '59' }, sec: { value: '120' } };
+      const dd = rowToDecimalDegrees(tmpRow, 'dms');
+      ok('parse carry seconds', approxEqual(dd, 11 + 1/60));
+
+      document.getElementById('testlog').textContent = lines.join('\n');
+    }
   </script>
 </body>
 </html>

@@ -379,32 +379,51 @@
 
     function approxEqual(a,b,eps=1e-6){ return Math.abs(a-b) <= eps; }
 
-    function runTests(){
+    function runTests() {
       const lines = [];
-      function ok(name, cond){ lines.push(`${cond ? 'PASS' : 'FAIL'}  ${name}`); }
+      const assertEqual = (a, b) => (typeof a === 'number' && typeof b === 'number') ? approxEqual(a, b) : a === b;
 
-      // Test 1: DM input sum equals expected decimal degrees
-      const t1a = 12 + 34.5/60; // 12°34.5′
-      const t1b = 5 + 27.8/60;  // 5°27.8′
-      const t1sum = t1a + t1b;  // expected 18.0383...
-      ok('DM math sum', approxEqual(t1sum, 18.0383333333, 1e-9));
+      function ok(name, actual, expected) {
+        const pass = assertEqual(actual, expected);
+        lines.push(`${pass ? '✅' : '❌'} ${name}`);
+        if (!pass) {
+          lines.push(`   Expected: ${expected}`);
+          lines.push(`     Actual: ${actual}`);
+        }
+      }
 
-      // Test 2: DMS formatting round-trip: 18.0383333333 -> 18° 02′ 18.00″ (p=2)
-      ok('formatDMS', formatDMS(18.0383333333, 2) === '18° 02′ 18.00″');
+      lines.push('Running tests...');
 
-      // Test 3: DM formatting at 2 places: -> 18° 02.30′
-      ok('formatDM', formatDM(18.0383333333, 2) === '18° 02.30′');
+      // Test 1: DM input sum
+      const t1a = 12 + 34.5 / 60; // 12°34.5′
+      const t1b = 5 + 27.8 / 60;  // 5°27.8′
+      const t1sum = t1a + t1b;
+      ok('DM math sum', t1sum, 18.0383333333);
 
-      // Test 4: wrap 361.2 to 1.2 (0–360)
-      ok('wrap 0–360', approxEqual(wrapDegrees(361.2, '360'), 1.2));
+      // Test 2: DMS formatting
+      const dmsResult = formatDMS(18.0383333333, 2);
+      ok('formatDMS', dmsResult, '18° 02′ 18.00″');
 
-      // Test 5: wrap -190 to 170 (−180..+180)
-      ok('wrap −180..+180', approxEqual(wrapDegrees(-190, '180'), 170));
+      // Test 3: DM formatting
+      const dmResult = formatDM(18.0383333333, 2);
+      ok('formatDM', dmResult, '18° 02.30′');
 
-      // Test 6: DMS parsing: 10° 59′ 120″ equals 11° 01′ 00″ after normalize
-      const tmpRow = { deg: { value: '10' }, min: { value: '59' }, sec: { value: '120' } };
-      const dd = rowToDecimalDegrees(tmpRow, 'dms');
-      ok('parse carry seconds', approxEqual(dd, 11 + 1/60));
+      // Test 4: Wrapping
+      ok('wrap 0–360', wrapDegrees(361.2, '360'), 1.2);
+      ok('wrap −180..+180', wrapDegrees(-190, '180'), 170);
+
+      // Test 5: DMS parsing with carry
+      const carryRow = { deg: { value: '10' }, min: { value: '59' }, sec: { value: '120' } };
+      const carryDd = rowToDecimalDegrees(carryRow, 'dms');
+      ok('DMS parse carry', carryDd, 11 + 1 / 60);
+
+      // Test 6: DMS minute truncation
+      const truncRow = { deg: { value: '20' }, min: { value: '30.999' }, sec: { value: '0' } };
+      const truncDd = rowToDecimalDegrees(truncRow, 'dms');
+      ok('DMS minute truncation', truncDd, 20.5);
+
+      const fails = lines.filter(l => l.startsWith('❌')).length;
+      lines.push(`\n${fails === 0 ? 'All tests passed! 🎉' : `${fails} test(s) failed.`}`);
 
       document.getElementById('testlog').textContent = lines.join('\n');
     }

@@ -210,7 +210,7 @@
     // Convert a row to decimal degrees
     function rowToDecimalDegrees(row, mode) {
       const d = parseNum(row.deg.value);
-      const m = parseNum(row.min.value);
+      let m = parseNum(row.min.value);
       const s = mode === 'dms' ? parseNum(row.sec.value) : 0;
 
       if (m < 0 || s < 0) throw new Error('Minutes and seconds must be non-negative');
@@ -218,6 +218,7 @@
       const sign = signOfDegrees(d);
       const D = absDeg(d);
       if (mode === 'dms') {
+        m = Math.trunc(m);
         return sign * (D + m / 60 + s / 3600);
       }
       return sign * (D + m / 60);
@@ -251,6 +252,7 @@
         if (m < 0) m = 0; if (s < 0) s = 0;
 
         if (mode === 'dms') {
+          m = Math.trunc(m);
           // Carry seconds to minutes
           if (s >= 60) { m += Math.floor(s / 60); s = s % 60; }
           // Carry minutes to degrees
@@ -335,7 +337,7 @@
         if (mode === 'dms') {
           row.classList.remove('dm');
           dmsBits.forEach(el => { el.removeAttribute('hidden'); el.setAttribute('aria-hidden','false'); el.style.display=''; });
-          mins.forEach(inp => { inp.setAttribute('step','1'); inp.setAttribute('placeholder','0'); });
+          mins.forEach(inp => { inp.setAttribute('step','1'); inp.setAttribute('placeholder','0'); inp.value = String(Math.trunc(parseNum(inp.value))); });
         } else {
           row.classList.add('dm');
           dmsBits.forEach(el => { el.setAttribute('hidden',''); el.setAttribute('aria-hidden','true'); el.style.display='none'; });

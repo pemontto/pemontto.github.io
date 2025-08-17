@@ -316,7 +316,8 @@
       }
       if (mode === '180') {
         let x = dd % 360;
-        if (x <= -180) x += 360;
+        // Correct the boundary condition to be exclusive for -180
+        if (x < -180) x += 360;
         if (x > 180) x -= 360;
         return x;
       }
@@ -421,6 +422,25 @@
       const truncRow = { deg: { value: '20' }, min: { value: '30.999' }, sec: { value: '0' } };
       const truncDd = rowToDecimalDegrees(truncRow, 'dms');
       ok('DMS minute truncation', truncDd, 20.5);
+
+      // Test 7: Negative angle parsing
+      const negRow = { deg: { value: '-10' }, min: { value: '30' }, sec: { value: '0' } };
+      const negDd = rowToDecimalDegrees(negRow, 'dm');
+      ok('Negative angle parsing', negDd, -10.5);
+
+      // Test 8: Normalization of large values
+      // We can't test normalizeInputs directly as it modifies UI fields.
+      // So we test the core logic via rowToDecimalDegrees which is what normalizeInputs would feed into.
+      const normRow = { deg: { value: '10' }, min: { value: '70' }, sec: { value: '90' } };
+      const normDd = rowToDecimalDegrees(normRow, 'dms');
+      ok('Normalization (70′ 90″)', normDd, 10 + 71/60 + 30/3600);
+
+      // Test 9: Wrapping boundaries
+      ok('Wrap 360° to 360° (raw)', wrapDegrees(360, 'none'), 360);
+      ok('Wrap 360° to 0° (0-360)', wrapDegrees(360, '360'), 0);
+      ok('Wrap 180° to 180° (-180..+180)', wrapDegrees(180, '180'), 180);
+      ok('Wrap -180° to -180° (-180..+180)', wrapDegrees(-180, '180'), -180);
+
 
       const fails = lines.filter(l => l.startsWith('❌')).length;
       lines.push(`\n${fails === 0 ? 'All tests passed! 🎉' : `${fails} test(s) failed.`}`);
